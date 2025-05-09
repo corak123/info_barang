@@ -28,21 +28,44 @@ def get_barang_dari_invoice(invoice_id):
     ]
 
 def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_barang, jumlah_keluar, tgl_sj, keterangan):
-    rows = invoice_sheet.get_all_records()
-    for idx, row in enumerate(rows, start=2):  # header = row 1
-        if row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang:
-            sisa = int(row["sisa"])
-            if jumlah_keluar > sisa:
-                return "Jumlah keluar melebihi sisa stok!"
+    # Ambil sheet yang relevan
+    keluar_sheet = sheet.worksheet("keluar")
+    invoice_sheet = sheet.worksheet("invoice")
 
-            # Update sisa di sheet
-            invoice_sheet.update_cell(idx, 5, sisa - jumlah_keluar)
+    # Proses pengurangan stok di sheet 'invoice'
+    invoice_data = invoice_sheet.get_all_records()
+    
+    # Cari invoice berdasarkan ID
+    invoice_row = None
+    for row in invoice_data:
+        if row['invoice_id'] == invoice_id:
+            invoice_row = row
+            break
 
-            # Tambahkan ke sheet keluar
-            keluar_sheet.append_row([
-                sj_id, invoice_id, so, po, nama_barang, kode_barang,
-                jumlah_keluar, tgl_sj, keterangan
-            ])
-            return "Barang berhasil dikeluarkan."
+    if not invoice_row:
+        return "Invoice tidak ditemukan."
 
-    return "Data invoice tidak ditemukan."
+    # Cek apakah stok mencukupi
+    if invoice_row['sisa'] < jumlah_keluar:
+        return "Stok tidak mencukupi."
+
+    # Kurangi stok di invoice
+    updated_sisa = invoice_row['sisa'] - jumlah_keluar
+    invoice_sheet.update_cell(invoice_row['row'], invoice_row['sisa_column_index'], updated_sisa)
+
+    # Simpan data barang keluar ke sheet 'keluar'
+    keluar_data = {
+        "sj_id": sj_id,
+        "invoice_id": invoice_id,
+        "so": so,
+        "po": po,
+        "nama_barang": nama_barang,
+        "kode_barang": kode_barang,
+        "jumlah_keluar": jumlah_keluar,
+        "tgl_sj": tgl_sj,
+        "keterangan": keterangan
+    }
+    keluar_sheet.append_row(keluar_data.values())
+
+    return f"Barang {nama_barang} ({kode_barang}) sebanyak {jumlah_keluar} berhasil dikeluarkan."
+
