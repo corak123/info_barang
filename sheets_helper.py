@@ -24,9 +24,12 @@ def get_barang_dari_invoice(invoice_id):
     data = invoice_sheet.get_all_records()
     return [
         row for row in data
-        if row["invoice_id"] == invoice_id and int(row["sisa"]) > 0
+        if row["invoice_id"].strip().lower() == invoice_id.strip().lower() and int(row["sisa"]) > 0
     ]
-    
+    st.write("DEBUG - invoice_id:", invoice_id)
+    st.write("DEBUG - Barang ditemukan:", barang_list)
+
+
 def invoice_sudah_ada(invoice_id, kode_barang):
     data = invoice_sheet.get_all_records()
     return any(row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang for row in data)
