@@ -1,5 +1,5 @@
 import streamlit as st
-from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validated, tambah_barang_masuk
+from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validated, tambah_barang_masuk, invoice_sudah_ada
 
 st.title("📦 Info Barang")
 
@@ -18,6 +18,8 @@ with st.form("form_barang_masuk"):
     if submitted:
         if not invoice_id.strip() or not nama_barang.strip() or not kode_barang.strip():
             st.error("Nomor Invoice, Nama Barang, dan Kode Barang wajib diisi.")
+        elif invoice_sudah_ada(invoice_id):
+            st.error("Nomor Invoice sudah digunakan. Gunakan invoice yang berbeda.")
         else:
             hasil = tambah_barang_masuk(
                 invoice_id=invoice_id,
