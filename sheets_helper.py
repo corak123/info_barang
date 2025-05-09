@@ -26,6 +26,11 @@ def get_barang_dari_invoice(invoice_id):
         row for row in rows
         if row["invoice_id"] == invoice_id and int(row["sisa"]) > 0
     ]
+    
+def invoice_sudah_ada(invoice_id):
+    data = invoice_sheet.get_all_records()
+    return any(row["invoice_id"] == invoice_id for row in data)
+
 
 def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, keterangan):
     try:
