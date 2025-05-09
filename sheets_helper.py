@@ -27,7 +27,7 @@ def get_barang_dari_invoice(invoice_id):
         if row["invoice_id"] == invoice_id and int(row["sisa"]) > 0
     ]
     
-def invoice_sudah_ada(invoice_id):
+def invoice_sudah_ada(invoice_id, kode_barang):
     data = invoice_sheet.get_all_records()
     return any(row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang for row in data)
 
