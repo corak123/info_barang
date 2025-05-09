@@ -30,20 +30,22 @@ barang_keluar_sheet = sheet.worksheet("keluar")
 
 def get_barang_dari_invoice(invoice_id):
     hasil = []
-    data = ambil_semua_data_barang()  # contoh fungsi ambil semua data dari spreadsheet
+    data = invoice_sheet.get_all_records()
 
     for row in data:
         # Cek apakah row adalah dict dan key tersedia
         if not isinstance(row, dict):
-            print("Row bukan dict:", row)
             continue
 
         if "invoice_id" not in row or "sisa" not in row:
-            print("Key tidak ditemukan di row:", row)
             continue
 
-        if row["invoice_id"].strip().lower() == invoice_id.strip().lower() and int(row["sisa"]) > 0:
-            hasil.append(row)
+        if row["invoice_id"].strip().lower() == invoice_id.strip().lower():
+            try:
+                if int(row["sisa"]) > 0:
+                    hasil.append(row)
+            except ValueError:
+                continue
 
     return hasil
 
