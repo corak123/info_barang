@@ -27,6 +27,23 @@ def get_barang_dari_invoice(invoice_id):
         if row["invoice_id"] == invoice_id and int(row["sisa"]) > 0
     ]
 
+def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, keterangan):
+    try:
+        invoice_sheet = sheet.worksheet("invoice")
+        row = [
+            invoice_id,
+            nama_barang,
+            kode_barang,
+            jumlah,
+            jumlah,  # sisa = jumlah saat pertama kali masuk
+            tanggal,
+            keterangan
+        ]
+        invoice_sheet.append_row(row)
+        return f"Barang {nama_barang} berhasil ditambahkan ke invoice {invoice_id}."
+    except Exception as e:
+        return f"Gagal menambahkan barang: {e}"
+
 def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_barang, jumlah_keluar, tgl_sj, keterangan):
     # Ambil sheet yang relevan
     keluar_sheet = sheet.worksheet("keluar")
