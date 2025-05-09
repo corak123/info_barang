@@ -1,0 +1,41 @@
+import streamlit as st
+from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validated
+
+st.title("📦 Barang Keluar dari Gudang")
+
+# Form input barang keluar
+with st.form("form_barang_keluar"):
+    invoice_id = st.text_input("Masukkan Nomor Invoice (Barang Masuk)")
+
+    if invoice_id:
+        barang_list = get_barang_dari_invoice(invoice_id)
+
+        if barang_list:
+            barang_nama_list = [f'{b["nama_barang"]} ({b["kode_barang"]}) - sisa: {b["sisa"]}' for b in barang_list]
+            pilihan_barang = st.selectbox("Pilih Barang", barang_nama_list)
+            selected = barang_list[barang_nama_list.index(pilihan_barang)]
+
+            jumlah_keluar = st.number_input("Jumlah Keluar", min_value=1, max_value=selected["sisa"])
+            sj_id = st.text_input("Nomor Surat Jalan")
+            so = st.text_input("SO")
+            po = st.text_input("PO")
+            tgl_sj = st.date_input("Tanggal SJ")
+            keterangan = st.text_area("Keterangan")
+
+            submitted = st.form_submit_button("Keluarkan Barang")
+
+            if submitted:
+                hasil = tambah_barang_keluar_validated(
+                    sj_id=sj_id,
+                    invoice_id=invoice_id,
+                    so=so,
+                    po=po,
+                    nama_barang=selected["nama_barang"],
+                    kode_barang=selected["kode_barang"],
+                    jumlah_keluar=jumlah_keluar,
+                    tgl_sj=str(tgl_sj),
+                    keterangan=keterangan
+                )
+                st.success(hasil) if "berhasil" in hasil.lower() else st.error(hasil)
+        else:
+            st.warning("Tidak ada barang dari invoice ini atau semua barang sudah habis.")
