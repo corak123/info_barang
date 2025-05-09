@@ -20,13 +20,32 @@ sheet = client.open(SPREADSHEET_NAME)
 invoice_sheet = sheet.worksheet("invoice")
 barang_keluar_sheet = sheet.worksheet("keluar")
 
+# def get_barang_dari_invoice(invoice_id):
+#     data = invoice_sheet.get_all_records()
+#     return [
+#         row for row in data
+#         if row.get("invoice_id", "").strip().lower() == invoice_id.strip().lower()
+#         and int(row.get("sisa", 0)) > 0
+#     ]
+
 def get_barang_dari_invoice(invoice_id):
-    data = invoice_sheet.get_all_records()
-    return [
-        row for row in data
-        if row.get("invoice_id", "").strip().lower() == invoice_id.strip().lower()
-        and int(row.get("sisa", 0)) > 0
-    ]
+    hasil = []
+    data = ambil_semua_data_barang()  # contoh fungsi ambil semua data dari spreadsheet
+
+    for row in data:
+        # Cek apakah row adalah dict dan key tersedia
+        if not isinstance(row, dict):
+            print("Row bukan dict:", row)
+            continue
+
+        if "invoice_id" not in row or "sisa" not in row:
+            print("Key tidak ditemukan di row:", row)
+            continue
+
+        if row["invoice_id"].strip().lower() == invoice_id.strip().lower() and int(row["sisa"]) > 0:
+            hasil.append(row)
+
+    return hasil
 
 
 def invoice_sudah_ada(invoice_id, kode_barang):
