@@ -53,7 +53,7 @@ with st.form("form_barang_keluar"):
         selected = barang_list[barang_nama_list.index(pilihan_barang)]
         jumlah_keluar = st.number_input("Jumlah Keluar", min_value=1, max_value=int(selected["sisa"]))
     else:
-        st.warning("Tidak ada barang dari invoice ini atau semua barang sudah habis.")
+        #st.warning("Tidak ada barang dari invoice ini atau semua barang sudah habis.")
         jumlah_keluar = 0  # Default saja
 
     sj_id = st.text_input("Nomor Surat Jalan")
