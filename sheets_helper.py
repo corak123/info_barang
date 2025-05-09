@@ -20,33 +20,38 @@ sheet = client.open(SPREADSHEET_NAME)
 invoice_sheet = sheet.worksheet("invoice")
 barang_keluar_sheet = sheet.worksheet("keluar")
 
-# def get_barang_dari_invoice(invoice_id):
-#     data = invoice_sheet.get_all_records()
-#     return [
-#         row for row in data
-#         if row.get("invoice_id", "").strip().lower() == invoice_id.strip().lower()
-#         and int(row.get("sisa", 0)) > 0
-#     ]
 
 def get_barang_dari_invoice(invoice_id):
     hasil = []
     data = invoice_sheet.get_all_records()
+    st.write("Semua data:", data)
 
-    for row in data:
-        # Cek apakah row adalah dict dan key tersedia
+    invoice_id = invoice_id.strip().lower()
+
+    for i, row in enumerate(data):
+        st.write(f"Baris {i}: {row}")
+        
         if not isinstance(row, dict):
+            st.warning(f"Baris {i} bukan dict, dilewati.")
             continue
 
         if "invoice_id" not in row or "sisa" not in row:
+            st.warning(f"Baris {i} tidak memiliki 'invoice_id' atau 'sisa'. Keys yang ada: {list(row.keys())}")
             continue
 
-        if row["invoice_id"].strip().lower() == invoice_id.strip().lower():
+        if row["invoice_id"].strip().lower() == invoice_id:
             try:
-                if int(row["sisa"]) > 0:
+                sisa = int(row["sisa"])
+                if sisa > 0:
                     hasil.append(row)
-            except ValueError:
+                    st.success(f"Baris {i} ditambahkan ke hasil: sisa = {sisa}")
+                else:
+                    st.info(f"Baris {i} sisa 0 atau kurang, dilewati.")
+            except Exception as e:
+                st.error(f"Baris {i} error parsing 'sisa': {row['sisa']} → {e}")
                 continue
 
+    st.write("Hasil akhir:", hasil)
     return hasil
 
 
