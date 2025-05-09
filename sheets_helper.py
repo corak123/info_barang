@@ -21,9 +21,9 @@ invoice_sheet = sheet.worksheet("invoice")
 keluar_sheet = sheet.worksheet("keluar")
 
 def get_barang_dari_invoice(invoice_id):
-    rows = invoice_sheet.get_all_records()
+    data = invoice_sheet.get_all_records()
     return [
-        row for row in rows
+        row for row in data
         if row["invoice_id"] == invoice_id and int(row["sisa"]) > 0
     ]
     
