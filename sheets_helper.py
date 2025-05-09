@@ -18,7 +18,7 @@ client = gspread.authorize(creds)
 SPREADSHEET_NAME = "stock_gudang"
 sheet = client.open(SPREADSHEET_NAME)
 invoice_sheet = sheet.worksheet("invoice")
-keluar_sheet = sheet.worksheet("keluar")
+barang_keluar_sheet = sheet.worksheet("keluar")
 
 def get_barang_dari_invoice(invoice_id):
     data = invoice_sheet.get_all_records()
@@ -29,7 +29,7 @@ def get_barang_dari_invoice(invoice_id):
     
 def invoice_sudah_ada(invoice_id):
     data = invoice_sheet.get_all_records()
-    return any(row["invoice_id"] == invoice_id for row in data)
+    return any(row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang for row in data)
 
 
 def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, keterangan):
