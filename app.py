@@ -16,15 +16,21 @@ with st.form("form_barang_masuk"):
     submitted = st.form_submit_button("Tambah Barang Masuk")
 
     if submitted:
-        hasil = tambah_barang_masuk(
-            invoice_id=invoice_id,
-            nama_barang=nama_barang,
-            kode_barang=kode_barang,
-            jumlah=jumlah,
-            tanggal=str(tanggal),
-            keterangan=keterangan
-        )
-        st.success(hasil) if "berhasil" in hasil.lower() else st.error(hasil)
+        if not invoice_id.strip() or not nama_barang.strip() or not kode_barang.strip():
+            st.error("Nomor Invoice, Nama Barang, dan Kode Barang wajib diisi.")
+        else:
+            hasil = tambah_barang_masuk(
+                invoice_id=invoice_id,
+                nama_barang=nama_barang,
+                kode_barang=kode_barang,
+                jumlah=jumlah,
+                tanggal=str(tanggal),
+                keterangan=keterangan
+            )
+            if "berhasil" in hasil.lower():
+                st.success("Barang berhasil masuk.")
+            else:
+                st.error(hasil)
 
 
 # Form input barang keluar
