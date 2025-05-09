@@ -6,6 +6,7 @@ st.title("📦 Barang Keluar dari Gudang")
 # Form input barang keluar
 with st.form("form_barang_keluar"):
     invoice_id = st.text_input("Masukkan Nomor Invoice (Barang Masuk)")
+    submit_button = st.form_submit_button(label="Kirim")
 
     if submit_button:
         if invoice_id:
