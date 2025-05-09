@@ -1,23 +1,21 @@
 import gspread
 from google.oauth2.service_account import Credentials
 
-# Scope yang mencakup Sheets dan Drive
-SCOPES = [
+# Ambil credentials dari st.secrets
+secrets = st.secrets["google_service_account"]
+
+# Buat credentials object
+creds = Credentials.from_service_account_info(secrets, scopes=[
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
-]
+])
 
-# Load credentials
-creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
-
-# Auth client
+# Inisialisasi client
 client = gspread.authorize(creds)
 
-# Open spreadsheet
+# Buka spreadsheet
 SPREADSHEET_NAME = "stock_gudang"
 sheet = client.open(SPREADSHEET_NAME)
-
-# Akses worksheet
 invoice_sheet = sheet.worksheet("invoice")
 keluar_sheet = sheet.worksheet("keluar")
 
