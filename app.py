@@ -18,7 +18,7 @@ with st.form("form_barang_masuk"):
     if submitted:
         if not invoice_id.strip() or not nama_barang.strip() or not kode_barang.strip():
             st.error("Nomor Invoice, Nama Barang, dan Kode Barang wajib diisi.")
-        elif invoice_sudah_ada(invoice_id):
+        elif invoice_sudah_ada(invoice_id, kode_barang):
             st.error("Nomor Invoice sudah digunakan. Gunakan invoice yang berbeda.")
         else:
             hasil = tambah_barang_masuk(
