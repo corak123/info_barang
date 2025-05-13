@@ -40,19 +40,6 @@ def get_barang_dari_invoice(invoice_id):
 
     return hasil
 
-def update_sisa_invoice(kode_barang, jumlah_keluar):
-    sheet = gc.open("NamaSpreadsheet").worksheet("invoice")
-    try:
-        cell = sheet.find(kode_barang)
-        if cell:
-            row = cell.row
-            kolom_sisa = 5  # Ganti ini sesuai letak kolom 'sisa'
-            sisa_lama = int(sheet.cell(row, kolom_sisa).value)
-            sisa_baru = max(0, sisa_lama - jumlah_keluar)
-            sheet.update_cell(row, kolom_sisa, sisa_baru)
-    except Exception as e:
-        st.error(f"Gagal update sisa invoice: {e}")
-
 def invoice_sudah_ada(invoice_id, kode_barang):
     data = invoice_sheet.get_all_records()
     return any(row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang for row in data)
