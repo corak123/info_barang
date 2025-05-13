@@ -45,6 +45,24 @@ def invoice_sudah_ada(invoice_id, kode_barang):
     return any(row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang for row in data)
 
 
+def update_sisa_barang(invoice_id, kode_barang, jumlah_keluar):
+    sheet = client.open("NAMASHEETMU").worksheet("invoice")  # ganti dengan nama sheet-mu
+    data = sheet.get_all_records()
+
+    for i, row in enumerate(data):
+        if row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang:
+            sisa_lama = int(row["sisa"])
+            sisa_baru = sisa_lama - jumlah_keluar
+            if sisa_baru < 0:
+                return f"Gagal: jumlah keluar melebihi sisa barang."
+
+            # Baris di gspread = i + 2 (karena baris pertama adalah header)
+            sheet.update_cell(i + 2, list(row.keys()).index("sisa") + 1, sisa_baru)
+            return "Sisa barang berhasil diperbarui."
+
+    return "Gagal menemukan data barang untuk update."
+
+
 def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, keterangan):
     try:
         row = [
