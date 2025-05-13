@@ -1,38 +1,106 @@
 import streamlit as st
-import gspread
-from google.oauth2.service_account import Credentials
+from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validated, tambah_barang_masuk, invoice_sudah_ada
 
-# Ambil credentials dari st.secrets
-secrets = st.secrets["google_service_account"]
+st.title("📦 Info Barang")
 
-# Setup credentials dan client
-creds = Credentials.from_service_account_info(secrets, scopes=[
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
-])
-client = gspread.authorize(creds)
+with st.form("form_barang_masuk"):
+    st.subheader("Tambah Barang Masuk (Invoice Baru)")
 
-# Buka spreadsheet dan worksheet
-SPREADSHEET_NAME = "stock_gudang"
-sheet = client.open(SPREADSHEET_NAME)
-invoice_sheet = sheet.worksheet("invoice")
+    invoice_id = st.text_input("Nomor Invoice")
+    nama_barang = st.text_input("Nama Barang")
+    kode_barang = st.text_input("Kode Barang")
+    jumlah = st.number_input("Jumlah Masuk", min_value=1)
+    tanggal = st.date_input("Tanggal Masuk")
+    keterangan = st.text_area("Keterangan")
 
-# UI Input
-baris = st.number_input("Masukkan baris yang ingin diubah (misal: 2)", min_value=2)
-nilai_baru = st.number_input("Masukkan nilai baru untuk kolom 'sisa'", step=1)
+    submitted = st.form_submit_button("Tambah Barang Masuk")
 
-if st.button("Coba Update Kolom 'sisa' di baris tersebut"):
-    try:
-        kolom_sisa = 5  # kolom ke-5 = kolom E
-        sebelum = invoice_sheet.cell(baris, kolom_sisa).value
-        st.write(f"Isi sebelum: {sebelum}")
+    if submitted:
+        if not invoice_id.strip() or not nama_barang.strip() or not kode_barang.strip():
+            st.error("Nomor Invoice, Nama Barang, dan Kode Barang wajib diisi.")
+        elif invoice_sudah_ada(invoice_id, kode_barang):
+            st.error("Nomor Invoice sudah digunakan. Gunakan invoice yang berbeda.")
+        else:
+            hasil = tambah_barang_masuk(
+                invoice_id=invoice_id,
+                nama_barang=nama_barang,
+                kode_barang=kode_barang,
+                jumlah=jumlah,
+                tanggal=str(tanggal),
+                keterangan=keterangan
+            )
+            if "berhasil" in hasil.lower():
+                st.success("Barang berhasil masuk.")
+            else:
+                st.error(hasil)
 
-        # Update pakai metode stabil
-        invoice_sheet.update(f"E{baris}", [[nilai_baru]])
 
-        sesudah = invoice_sheet.cell(baris, kolom_sisa).value
-        st.success(f"Update berhasil. Isi sesudah: {sesudah}")
+# Form input barang keluar
+# --- Form 1: Cek Invoice ---
+with st.form("form_cek_invoice"):
+    invoice_id = st.text_input("Masukkan Nomor Invoice").strip()
+    cek_ditekan = st.form_submit_button("Cek Invoice")
 
-    except Exception as e:
-        st.error(f"Gagal update: {e}")
+barang_list = []
+selected = None
+
+# Proses setelah klik tombol "Cek Invoice"
+if cek_ditekan and invoice_id:
+    barang_list = get_barang_dari_invoice(invoice_id)
+
+    if not barang_list:
+        st.error("Invoice tidak ditemukan atau tidak ada barang tersedia.")
+    else:
+        st.success("Invoice valid, silakan isi form barang keluar.")
+
+# --- Form 2: Form Barang Keluar ---
+if barang_list:
+    with st.form("form_barang_keluar"):
+        pilihan = [
+            f'{b["nama_barang"]} ({b["kode_barang"]}) - sisa: {b["sisa"]}'
+            for b in barang_list
+        ]
+        pilihan_barang = st.selectbox("Pilih Barang yang Ingin Dikeluarkan", pilihan)
+        try:
+            selected = barang_list[pilihan.index(pilihan_barang)]
+        except (ValueError, IndexError):
+            selected = None
+
+        jumlah_keluar = st.number_input(
+            "Jumlah Barang Keluar",
+            min_value=1,
+            max_value=int(selected["sisa"]) if selected else 1
+        )
+
+        sj_id = st.text_input("Nomor Surat Jalan")
+        so = st.text_input("SO")
+        po = st.text_input("PO")
+        tgl_sj = st.date_input("Tanggal Surat Jalan")
+        keterangan = st.text_area("Keterangan")
+
+        submitted = st.form_submit_button("Keluarkan Barang")
+
+        if submitted:
+            if not invoice_id or not selected:
+                st.error("Invoice tidak valid atau barang tidak dipilih.")
+            elif jumlah_keluar <= 0:
+                st.error("Jumlah keluar harus lebih dari 0.")
+            elif not sj_id or not so or not po:
+                st.error("Harap lengkapi semua informasi SJ, SO, dan PO.")
+            else:
+                hasil = tambah_barang_keluar_validated(
+                    sj_id=sj_id,
+                    invoice_id=invoice_id,
+                    so=so,
+                    po=po,
+                    nama_barang=selected["nama_barang"],
+                    kode_barang=selected["kode_barang"],
+                    jumlah_keluar=int(jumlah_keluar),
+                    tgl_sj=str(tgl_sj),
+                    keterangan=keterangan
+                )
+                if "berhasil" in hasil.lower():
+                    st.success("Barang berhasil dikeluarkan.")
+                else:
+                    st.error(hasil)
 
