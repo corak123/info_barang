@@ -77,8 +77,11 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
                 return f"Jumlah keluar melebihi sisa stok ({sisa})"
             else:
                 new_sisa = sisa - jumlah_keluar
+
                 try:
-                    invoice_sheet.update(f"E{idx + 2}", [[new_sisa]])
+                    # Hitung baris di sheet (get_all_records tidak termasuk header)
+                    baris_di_sheet = idx + 2
+                    invoice_sheet.update(f"E{baris_di_sheet}", [[new_sisa]])
                 except Exception as e:
                     return f"Gagal update sisa: {e}"
 
