@@ -1,5 +1,5 @@
 import streamlit as st
-from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validated, tambah_barang_masuk, invoice_sudah_ada
+from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validated, tambah_barang_masuk, invoice_sudah_ada, update_sisa_barang
 
 st.title("📦 Info Barang")
 
@@ -102,6 +102,15 @@ if barang_list:
                 )
 
                 if "berhasil" in hasil.lower():
+                    if "berhasil" in hasil.lower():
+                        update_result = update_sisa_barang(invoice_id, selected["kode_barang"], int(jumlah_keluar))
+                        if "berhasil" in update_result.lower():
+                            st.success("Barang berhasil dikeluarkan dan sisa di-invoice diperbarui.")
+                        else:
+                            st.warning(f"Barang berhasil dikeluarkan, tapi gagal update sisa: {update_result}")
+                    else:
+                        st.error(hasil)
+
                     st.success("Barang berhasil dikeluarkan.")
                 else:
                     st.error(hasil)
