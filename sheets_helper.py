@@ -78,7 +78,7 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
             else:
                 new_sisa = sisa - jumlah_keluar
                 try:
-                    invoice_sheet.update_cell(idx + 2, 5, new_sisa)
+                    invoice_sheet.update(f"E{idx + 2}", [[new_sisa]])
                 except Exception as e:
                     return f"Gagal update sisa: {e}"
 
