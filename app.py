@@ -35,18 +35,14 @@ with st.form("form_barang_masuk"):
                 st.error(hasil)
 
 
-# Form input barang keluar
-# --- Form 1: Cek Invoice ---
 # --- Form 1: Cek Invoice ---
 with st.form("form_cek_invoice"):
     invoice_id = st.text_input("Masukkan Nomor Invoice").strip()
     cek_ditekan = st.form_submit_button("Cek Invoice")
 
-# Variabel global
 barang_list = []
 selected = None
 
-# Proses setelah klik tombol "Cek Invoice"
 if cek_ditekan and invoice_id:
     barang_list = get_barang_dari_invoice(invoice_id)
 
@@ -55,33 +51,56 @@ if cek_ditekan and invoice_id:
     else:
         st.success("Invoice valid, silakan isi form barang keluar.")
 
-# --- Form 2: Barang Keluar (TIDAK BOLEH DI DALAM FORM LAIN) ---
 if barang_list:
-    st.write("DEBUG: barang_list:", barang_list)  # DEBUG
-
     with st.form("form_barang_keluar"):
-        pilihan = []
-        for b in barang_list:
-            try:
-                sisa_str = str(b.get("sisa", ""))
-                nama_str = str(b.get("nama_barang", ""))
-                kode_str = str(b.get("kode_barang", ""))
-                label = f"{nama_str} ({kode_str}) - sisa: {sisa_str}"
-                pilihan.append(label)
-            except Exception as e:
-                st.error(f"Error formatting pilihan: {e}")
-
-        st.write("DEBUG: pilihan list:", pilihan)  # DEBUG
-
+        pilihan = [
+            f'{b["nama_barang"]} ({b["kode_barang"]}) - sisa: {b["sisa"]}'
+            for b in barang_list
+        ]
         pilihan_barang = st.selectbox("Pilih Barang yang Ingin Dikeluarkan", pilihan)
+        try:
+            selected = barang_list[pilihan.index(pilihan_barang)]
+        except (ValueError, IndexError):
+            selected = None
 
-        submitted_keluar = st.form_submit_button("Keluarkan Barang")
+        jumlah_keluar = st.number_input(
+            "Jumlah Barang Keluar",
+            min_value=1,
+            max_value=int(selected["sisa"]) if selected else 1
+        )
 
-        if submitted_keluar:
-            try:
-                selected_index = pilihan.index(pilihan_barang)
-                selected = barang_list[selected_index]
-                st.write("DEBUG: selected barang:", selected)  # DEBUG
-                # Lanjutkan proses penyimpanan
-            except Exception as e:
-                st.error(f"Error mendapatkan barang terpilih: {e}")
+        sj_id = st.text_input("Nomor Surat Jalan")
+        so = st.text_input("SO")
+        po = st.text_input("PO")
+        tgl_sj = st.date_input("Tanggal Surat Jalan")
+        keterangan = st.text_area("Keterangan")
+
+        submitted = st.form_submit_button("Keluarkan Barang")
+
+        if submitted:
+            if not invoice_id or not selected:
+                st.error("Invoice tidak valid atau barang tidak dipilih.")
+            elif jumlah_keluar <= 0:
+                st.error("Jumlah keluar harus lebih dari 0.")
+            elif not sj_id or not so or not po:
+                st.error("Harap lengkapi semua informasi SJ, SO, dan PO.")
+            else:
+                hasil = tambah_barang_keluar_validated(
+                    sj_id=sj_id,
+                    invoice_id=invoice_id,
+                    so=so,
+                    po=po,
+                    nama_barang=selected["nama_barang"],
+                    kode_barang=selected["kode_barang"],
+                    jumlah_keluar=int(jumlah_keluar),
+                    tgl_sj=str(tgl_sj),
+                    keterangan=keterangan
+                )
+                if "berhasil" in hasil.lower():
+                    update_sisa_invoice(
+                        kode_barang=selected["kode_barang"],
+                        jumlah_keluar=int(jumlah_keluar)
+                    )
+                    st.success("Barang berhasil dikeluarkan.")
+                else:
+                    st.error(hasil)
