@@ -54,30 +54,30 @@ with st.form("form_cek_invoice"):
             st.success("Invoice valid, silakan isi form barang keluar.")
     
     # --- Form 2: Form Barang Keluar ---
-if barang_list:
-    st.write("DEBUG: barang_list:", barang_list)  # DEBUG
-
-    with st.form("form_barang_keluar"):
-        pilihan = []
-        for b in barang_list:
+    if barang_list:
+        st.write("DEBUG: barang_list:", barang_list)  # DEBUG
+    
+        with st.form("form_barang_keluar"):
+            pilihan = []
+            for b in barang_list:
+                try:
+                    sisa_str = str(b.get("sisa", ""))
+                    nama_str = str(b.get("nama_barang", ""))
+                    kode_str = str(b.get("kode_barang", ""))
+                    label = f"{nama_str} ({kode_str}) - sisa: {sisa_str}"
+                    pilihan.append(label)
+                except Exception as e:
+                    st.error(f"Error formatting pilihan: {e}")
+            
+            st.write("DEBUG: pilihan list:", pilihan)  # DEBUG
+    
+            pilihan_barang = st.selectbox("Pilih Barang yang Ingin Dikeluarkan", pilihan)
+    
             try:
-                sisa_str = str(b.get("sisa", ""))
-                nama_str = str(b.get("nama_barang", ""))
-                kode_str = str(b.get("kode_barang", ""))
-                label = f"{nama_str} ({kode_str}) - sisa: {sisa_str}"
-                pilihan.append(label)
+                selected_index = pilihan.index(pilihan_barang)
+                selected = barang_list[selected_index]
+                st.write("DEBUG: selected barang:", selected)  # DEBUG
             except Exception as e:
-                st.error(f"Error formatting pilihan: {e}")
-        
-        st.write("DEBUG: pilihan list:", pilihan)  # DEBUG
-
-        pilihan_barang = st.selectbox("Pilih Barang yang Ingin Dikeluarkan", pilihan)
-
-        try:
-            selected_index = pilihan.index(pilihan_barang)
-            selected = barang_list[selected_index]
-            st.write("DEBUG: selected barang:", selected)  # DEBUG
-        except Exception as e:
-            st.error(f"Error mendapatkan barang terpilih: {e}")
-            selected = None
-
+                st.error(f"Error mendapatkan barang terpilih: {e}")
+                selected = None
+    
