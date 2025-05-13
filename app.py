@@ -1,5 +1,5 @@
 import streamlit as st
-from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validated, tambah_barang_masuk, invoice_sudah_ada, update_sisa_invoice
+from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validated, tambah_barang_masuk, invoice_sudah_ada
 
 st.title("📦 Info Barang")
 
