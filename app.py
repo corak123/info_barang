@@ -53,22 +53,13 @@ if cek_ditekan and invoice_id:
 
 if barang_list:
     with st.form("form_barang_keluar"):
-        pilihan = [
-            f'{b["nama_barang"]} ({b["kode_barang"]}) - sisa: {b["sisa"]}'
-            for b in barang_list
-        ]
-        pilihan_barang = st.selectbox("Pilih Barang yang Ingin Dikeluarkan", pilihan)
-        try:
-            selected = barang_list[pilihan.index(pilihan_barang)]
-        except (ValueError, IndexError):
-            selected = None
-
         jumlah_keluar = st.number_input(
             "Jumlah Barang Keluar",
             min_value=1,
             max_value=int(selected["sisa"]) if selected else 1
         )
-
+        nama_barang = st.text_input("nama_barang")
+        kode_barang = st.text_input("kode_barang")
         sj_id = st.text_input("Nomor Surat Jalan")
         so = st.text_input("SO")
         po = st.text_input("PO")
@@ -90,8 +81,8 @@ if barang_list:
                     invoice_id=invoice_id,
                     so=so,
                     po=po,
-                    nama_barang=selected["nama_barang"],
-                    kode_barang=selected["kode_barang"],
+                    nama_barang=nama_barang,
+                    kode_barang=kode_barang,
                     jumlah_keluar=int(jumlah_keluar),
                     tgl_sj=str(tgl_sj),
                     keterangan=keterangan
