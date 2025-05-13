@@ -48,7 +48,6 @@ def invoice_sudah_ada(invoice_id, kode_barang):
 
 def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, keterangan):
     try:
-        invoice_sheet = sheet.worksheet("invoice")
         row = [
             invoice_id,
             nama_barang,
