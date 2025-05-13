@@ -56,11 +56,13 @@ with st.form("form_cek_invoice"):
     # --- Form 2: Form Barang Keluar ---
     if barang_list:
         with st.form("form_barang_keluar"):
+            # Buat daftar pilihan barang
             pilihan = [
                 f'{b["nama_barang"]} ({b["kode_barang"]}) - sisa: {b["sisa"]}'
                 for b in barang_list
             ]
             pilihan_barang = st.selectbox("Pilih Barang yang Ingin Dikeluarkan", pilihan)
+    
             try:
                 selected = barang_list[pilihan.index(pilihan_barang)]
             except (ValueError, IndexError):
@@ -69,7 +71,8 @@ with st.form("form_cek_invoice"):
             jumlah_keluar = st.number_input(
                 "Jumlah Barang Keluar",
                 min_value=1,
-                max_value=int(selected["sisa"]) if selected else 1
+                max_value=int(selected["sisa"]) if selected else 1,
+                step=1
             )
     
             sj_id = st.text_input("Nomor Surat Jalan")
@@ -81,10 +84,10 @@ with st.form("form_cek_invoice"):
             submitted = st.form_submit_button("Keluarkan Barang")
     
             if submitted:
-                if not invoice_id or not selected:
-                    st.error("Invoice tidak valid atau barang tidak dipilih.")
-                elif jumlah_keluar <= 0:
-                    st.error("Jumlah keluar harus lebih dari 0.")
+                if not invoice_id:
+                    st.error("Invoice ID tidak ditemukan.")
+                elif not selected:
+                    st.error("Barang tidak valid.")
                 else:
                     hasil = tambah_barang_keluar_validated(
                         sj_id=sj_id,
@@ -97,7 +100,8 @@ with st.form("form_cek_invoice"):
                         tgl_sj=str(tgl_sj),
                         keterangan=keterangan
                     )
+    
                     if "berhasil" in hasil.lower():
-                        st.success("Barang berhasil dikeluarkan.")
+                        st.success(hasil)
                     else:
                         st.error(hasil)
