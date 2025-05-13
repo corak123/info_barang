@@ -64,31 +64,30 @@ def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, k
         return f"Gagal menambahkan barang: {e}"
 
 def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_barang, jumlah_keluar, tgl_sj, keterangan):
-    try:
-        data = invoice_sheet.get_all_records()
-    except Exception as e:
-        return f"Error membaca data invoice: {e}"
+    data = invoice_sheet.get_all_records()
 
     for idx, row in enumerate(data):
-        if row.get("invoice_id") == invoice_id and row.get("kode_barang") == kode_barang:
+        if row["invoice_id"] == invoice_id and str(row["kode_barang"]) == str(kode_barang):
             try:
-                sisa = int(row.get("sisa", 0))
-                if jumlah_keluar > sisa:
-                    return f"Jumlah keluar melebihi sisa stok ({sisa})"
-                
-                # Update sisa di invoice (ingat: baris ke-2 = indeks 0 + 2)
-                invoice_sheet.update_cell(idx + 2, 5, sisa - jumlah_keluar)  # Kolom E = sisa
+                sisa = int(row["sisa"])
+                jumlah_keluar = int(jumlah_keluar)
+            except ValueError:
+                return "Format angka tidak valid."
 
-                # Tambahkan ke sheet barang keluar
+            if jumlah_keluar > sisa:
+                return f"Jumlah keluar melebihi sisa stok ({sisa})"
+            else:
+                new_sisa = sisa - jumlah_keluar
+                try:
+                    invoice_sheet.update_cell(idx + 2, 5, new_sisa)
+                except Exception as e:
+                    return f"Gagal update sisa: {e}"
+
                 barang_keluar_sheet.append_row([
                     sj_id, invoice_id, so, po, nama_barang, kode_barang,
                     jumlah_keluar, tgl_sj, keterangan
                 ])
+                return f"Barang berhasil dikeluarkan. Sisa sekarang: {new_sisa}"
 
-                return "Barang berhasil dikeluarkan."
-            
-            except Exception as e:
-                return f"Gagal memproses transaksi: {e}"
-
-    return "Data invoice dan barang tidak ditemukan."
+    return "Data tidak ditemukan."
 
