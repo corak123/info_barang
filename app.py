@@ -53,11 +53,7 @@ if cek_ditekan and invoice_id:
 
 if barang_list:
     with st.form("form_barang_keluar"):
-        jumlah_keluar = st.number_input(
-            "Jumlah Barang Keluar",
-            min_value=1,
-            max_value=int(selected["sisa"]) if selected else 1
-        )
+        jumlah_keluar = st.text_input("jumlah_keluar")
         nama_barang = st.text_input("nama_barang")
         kode_barang = st.text_input("kode_barang")
         sj_id = st.text_input("Nomor Surat Jalan")
