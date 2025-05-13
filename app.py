@@ -55,53 +55,29 @@ with st.form("form_cek_invoice"):
     
     # --- Form 2: Form Barang Keluar ---
 if barang_list:
+    st.write("DEBUG: barang_list:", barang_list)  # DEBUG
+
     with st.form("form_barang_keluar"):
-        # Buat daftar pilihan barang
-        pilihan = [
-            f'{b["nama_barang"]} ({b["kode_barang"]}) - sisa: {b["sisa"]}'
-            for b in barang_list
-        ]
+        pilihan = []
+        for b in barang_list:
+            try:
+                sisa_str = str(b.get("sisa", ""))
+                nama_str = str(b.get("nama_barang", ""))
+                kode_str = str(b.get("kode_barang", ""))
+                label = f"{nama_str} ({kode_str}) - sisa: {sisa_str}"
+                pilihan.append(label)
+            except Exception as e:
+                st.error(f"Error formatting pilihan: {e}")
+        
+        st.write("DEBUG: pilihan list:", pilihan)  # DEBUG
+
         pilihan_barang = st.selectbox("Pilih Barang yang Ingin Dikeluarkan", pilihan)
 
         try:
-            selected = barang_list[pilihan.index(pilihan_barang)]
-        except (ValueError, IndexError):
+            selected_index = pilihan.index(pilihan_barang)
+            selected = barang_list[selected_index]
+            st.write("DEBUG: selected barang:", selected)  # DEBUG
+        except Exception as e:
+            st.error(f"Error mendapatkan barang terpilih: {e}")
             selected = None
 
-        jumlah_keluar = st.number_input(
-            "Jumlah Barang Keluar",
-            min_value=1,
-            max_value=int(selected["sisa"]) if selected else 1,
-            step=1
-        )
-
-        sj_id = st.text_input("Nomor Surat Jalan")
-        so = st.text_input("SO")
-        po = st.text_input("PO")
-        tgl_sj = st.date_input("Tanggal Surat Jalan")
-        keterangan = st.text_area("Keterangan")
-
-        submitted = st.form_submit_button("Keluarkan Barang")
-
-        if submitted:
-            if not invoice_id:
-                st.error("Invoice ID tidak ditemukan.")
-            elif not selected:
-                st.error("Barang tidak valid.")
-            else:
-                hasil = tambah_barang_keluar_validated(
-                    sj_id=sj_id,
-                    invoice_id=invoice_id,
-                    so=so,
-                    po=po,
-                    nama_barang=selected["nama_barang"],
-                    kode_barang=selected["kode_barang"],
-                    jumlah_keluar=int(jumlah_keluar),
-                    tgl_sj=str(tgl_sj),
-                    keterangan=keterangan
-                )
-
-                if "berhasil" in hasil.lower():
-                    st.success(hasil)
-                else:
-                    st.error(hasil)
