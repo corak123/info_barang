@@ -63,6 +63,7 @@ def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, k
         return f"Gagal menambahkan barang: {e}"
 
 def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_barang, jumlah_keluar, tgl_sj, keterangan):
+    # Ambil semua data dari sheet 'invoice'
     data = invoice_sheet.get_all_records()
 
     for idx, row in enumerate(data):
@@ -77,19 +78,24 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
                 return f"Jumlah keluar melebihi sisa stok ({sisa})"
             else:
                 new_sisa = sisa - jumlah_keluar
+                baris_di_sheet = idx + 2  # Tambahkan 2 karena header + indexing 0-based
 
                 try:
-                    # Hitung baris di sheet (get_all_records tidak termasuk header)
-                    baris_di_sheet = idx + 2
+                    # Update nilai kolom 'sisa'
                     invoice_sheet.update(f"E{baris_di_sheet}", [[new_sisa]])
                 except Exception as e:
-                    return f"Gagal update sisa: {e}"
+                    return f"Gagal update kolom sisa: {e}"
 
-                barang_keluar_sheet.append_row([
-                    sj_id, invoice_id, so, po, nama_barang, kode_barang,
-                    jumlah_keluar, tgl_sj, keterangan
-                ])
+                try:
+                    # Tambahkan baris baru ke sheet 'keluar'
+                    barang_keluar_sheet.append_row([
+                        sj_id, invoice_id, so, po, nama_barang, kode_barang,
+                        jumlah_keluar, str(tgl_sj), keterangan
+                    ])
+                except Exception as e:
+                    return f"Update sisa berhasil, tapi gagal menambahkan ke sheet 'keluar': {e}"
+
                 return f"Barang berhasil dikeluarkan. Sisa sekarang: {new_sisa}"
 
-    return "Data tidak ditemukan."
+    return "Data invoice dan kode barang tidak ditemukan."
 
