@@ -103,6 +103,8 @@ if barang_list:
                 st.error("Invoice tidak valid atau barang tidak dipilih.")
             elif jumlah_keluar <= 0:
                 st.error("Jumlah keluar harus lebih dari 0.")
+            elif jumlah_keluar > int(selected["sisa"]):
+                st.error(f"Jumlah keluar melebihi sisa stok ({selected['sisa']}).")
             else:
                 with st.spinner("Memproses pengeluaran barang..."):
                     hasil = tambah_barang_keluar_validated(
