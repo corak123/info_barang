@@ -86,7 +86,7 @@ if barang_list:
         sj_id = st.text_input("Nomor Surat Jalan")
         so = st.text_input("SO")
         po = st.text_input("PO")
-        tgl_sj = st.date_input("Tanggal Surat Jalan", value=date.today())
+        tgl_sj = st.date_input("Tanggal Surat Jalan")
         keterangan = st.text_area("Keterangan")
 
         submitted = st.form_submit_button("Keluarkan Barang")
