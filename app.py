@@ -110,7 +110,7 @@ if barang_list:
                         keterangan=keterangan
                     )
 
-                    if "berhasil" in hasil.lower():
+                    if "berhasil" in str(hasil.lower()):
                         update_result = update_sisa_barang(
                             invoice_id, selected["kode_barang"], int(jumlah_keluar)
                         )
