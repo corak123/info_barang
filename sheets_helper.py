@@ -82,7 +82,6 @@ def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, k
         return f"Gagal menambahkan barang: {e}"
 
 def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_barang, jumlah_keluar, tgl_sj, keterangan):
-    # Ambil semua data dari sheet 'invoice'
     data = invoice_sheet.get_all_records()
 
     for idx, row in enumerate(data):
@@ -90,9 +89,7 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
             row["invoice_id"].strip().lower() == invoice_id.strip().lower() and
             str(row["kode_barang"]).strip().lower() == str(kode_barang).strip().lower()
         ):
-
             try:
-                #sisa = int(row["sisa"])
                 sisa = int(row["sisa"]) if row["sisa"] else 0
                 jumlah_keluar = int(jumlah_keluar)
             except ValueError:
@@ -122,4 +119,3 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
                 return f"Barang berhasil dikeluarkan. Sisa sekarang: {new_sisa}"
 
     return "Data invoice dan kode barang tidak ditemukan."
-
