@@ -127,6 +127,7 @@ def tambah_barang_keluar_validated(
     return "Data barang tidak ditemukan di invoice."
 
 
+
 def update_sisa_barang(invoice_id, kode_barang, jumlah_keluar):
     data = invoice_sheet.get_all_records()
 
