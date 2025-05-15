@@ -94,8 +94,10 @@ def tambah_barang_keluar_validated(
     data = invoice_sheet.get_all_records()
 
     for idx, row in enumerate(data):
+        print(f"\n[DEBUG] Cek baris ke-{idx+2}:")
+        print(f"  invoice_id: '{row['invoice_id']}'")
+        print(f"  kode_barang: '{row['kode_barang']}'")
         if row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang:
-            print(f"[DEBUG] Row yang cocok: {row}")
             try:
                 sisa = int(row["sisa"]) if row["sisa"] else 0
                 jumlah_keluar = int(jumlah_keluar)
