@@ -86,7 +86,7 @@ if barang_list:
         sj_id = st.text_input("Nomor Surat Jalan")
         so = st.text_input("SO")
         po = st.text_input("PO")
-        tgl_sj = st.date_input("Tanggal Surat Jalan", value=date.today())
+        tgl_sj = st.date_input("Tanggal Surat Jalan")
         keterangan = st.text_area("Keterangan")
 
         submitted = st.form_submit_button("Keluarkan Barang")
@@ -96,8 +96,6 @@ if barang_list:
                 st.error("Invoice tidak valid atau barang tidak dipilih.")
             elif jumlah_keluar <= 0:
                 st.error("Jumlah keluar harus lebih dari 0.")
-            elif not sj_id or not so or not po:
-                st.error("Harap lengkapi semua informasi SJ, SO, dan PO.")
             else:
                 with st.spinner("Memproses pengeluaran barang..."):
                     hasil = tambah_barang_keluar_validated(
