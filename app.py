@@ -34,22 +34,6 @@ with st.form("form_barang_masuk"):
             else:
                 st.error(hasil)
 
-# Session state default
-# if "invoice_id" not in st.session_state:
-#     st.session_state.invoice_id = ""
-# if "barang_list" not in st.session_state:
-#     st.session_state.barang_list = []
-# if "jumlah_keluar_input" not in st.session_state:
-#     st.session_state.jumlah_keluar_input = 1
-# if "sj_input" not in st.session_state:
-#     st.session_state.sj_input = ""
-# if "so_input" not in st.session_state:
-#     st.session_state.so_input = ""
-# if "po_input" not in st.session_state:
-#     st.session_state.po_input = ""
-# if "keterangan_input" not in st.session_state:
-#     st.session_state.keterangan_input = ""
-    
 
 # --- Form 1: Cek Invoice ---
 with st.form("form_cek_invoice"):
