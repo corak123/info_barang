@@ -49,24 +49,24 @@ def invoice_sudah_ada(invoice_id, kode_barang):
     )
 
 
-def update_sisa_barang(invoice_id, kode_barang, jumlah_keluar):
-    data = invoice_sheet.get_all_records()
+# def update_sisa_barang(invoice_id, kode_barang, jumlah_keluar):
+#     data = invoice_sheet.get_all_records()
 
-    for i, row in enumerate(data):
-        if row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang:
-            try:
-                sisa_lama = int(row["sisa"])
-                sisa_baru = sisa_lama - jumlah_keluar
-                if sisa_baru < 0:
-                    return "Gagal: jumlah keluar melebihi sisa barang."
+#     for i, row in enumerate(data):
+#         if row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang:
+#             try:
+#                 sisa_lama = int(row["sisa"])
+#                 sisa_baru = sisa_lama - jumlah_keluar
+#                 if sisa_baru < 0:
+#                     return "Gagal: jumlah keluar melebihi sisa barang."
 
-                # Baris di gspread = i + 2 (karena baris pertama adalah header)
-                invoice_sheet.update_cell(i + 2, list(row.keys()).index("sisa") + 1, sisa_baru)
-                return "Sisa barang berhasil diperbarui."
-            except Exception as e:
-                return f"Gagal saat update sisa: {e}"
+#                 # Baris di gspread = i + 2 (karena baris pertama adalah header)
+#                 invoice_sheet.update_cell(i + 2, list(row.keys()).index("sisa") + 1, sisa_baru)
+#                 return "Sisa barang berhasil diperbarui."
+#             except Exception as e:
+#                 return f"Gagal saat update sisa: {e}"
 
-    return "Gagal menemukan data barang untuk update."
+#     return "Gagal menemukan data barang untuk update."
 
 
 def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, keterangan):
@@ -85,7 +85,10 @@ def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, k
     except Exception as e:
         return f"Gagal menambahkan barang: {e}"
 
-def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_barang, jumlah_keluar, tgl_sj, keterangan):
+
+def tambah_barang_keluar_validated(invoice_sheet, barang_keluar_sheet,
+                                   sj_id, invoice_id, so, po, nama_barang, kode_barang,
+                                   jumlah_keluar, tgl_sj, keterangan):
     data = invoice_sheet.get_all_records()
 
     for idx, row in enumerate(data):
@@ -100,7 +103,7 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
                 return f"Jumlah keluar melebihi sisa stok ({sisa})"
             else:
                 new_sisa = sisa - jumlah_keluar
-                baris_di_sheet = idx + 2  # Tambahkan 2 karena header + indexing 0-based
+                baris_di_sheet = idx + 2  # header + 0-based idx
 
                 try:
                     invoice_sheet.update(f"E{baris_di_sheet}", [[new_sisa]])
@@ -116,3 +119,25 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
                     return f"Update sisa berhasil, tapi gagal menambahkan ke sheet 'keluar': {e}"
 
                 return f"Barang berhasil dikeluarkan. Sisa sekarang: {new_sisa}"
+
+    return "Data barang tidak ditemukan di invoice."
+
+
+def update_sisa_barang(invoice_sheet, invoice_id, kode_barang, jumlah_keluar):
+    data = invoice_sheet.get_all_records()
+
+    for i, row in enumerate(data):
+        if row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang:
+            try:
+                sisa_lama = int(row["sisa"])
+                sisa_baru = sisa_lama - jumlah_keluar
+                if sisa_baru < 0:
+                    return "Gagal: jumlah keluar melebihi sisa barang."
+
+                invoice_sheet.update_cell(i + 2, list(row.keys()).index("sisa") + 1, sisa_baru)
+                return "Sisa barang berhasil diperbarui."
+            except Exception as e:
+                return f"Gagal saat update sisa: {e}"
+
+    return "Gagal menemukan data barang untuk update."
+
