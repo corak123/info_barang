@@ -111,9 +111,9 @@ if barang_list:
                     )
 
                     if "berhasil" in hasil.lower():
-                        update_result = update_sisa_barang(
-                            invoice_id, selected["kode_barang"], int(jumlah_keluar)
-                        )
+                        # update_result = update_sisa_barang(
+                        #     invoice_id, selected["kode_barang"], int(jumlah_keluar)
+                        # )
 
                         if "berhasil" in update_result.lower():
                             st.success("Barang berhasil dikeluarkan dan sisa di-invoice diperbarui.")
