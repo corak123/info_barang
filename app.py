@@ -78,10 +78,16 @@ if barang_list:
         except (ValueError, IndexError):
             selected = None
 
+        # jumlah_keluar = st.number_input(
+        #     "Jumlah Barang Keluar",
+        #     min_value=1,
+        #     max_value=int(selected["sisa"]) if selected and selected["sisa"] else 1
+        # )
         jumlah_keluar = st.number_input(
             "Jumlah Barang Keluar",
             min_value=1,
-            max_value=int(selected["sisa"]) if selected and selected["sisa"] else 1
+            max_value=int(selected["sisa"]) if selected and selected["sisa"] else 1,
+            step=1
         )
 
         sj_id = st.text_input("Nomor Surat Jalan")
