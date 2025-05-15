@@ -95,6 +95,7 @@ def tambah_barang_keluar_validated(
 
     for idx, row in enumerate(data):
         if row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang:
+            print(f"[DEBUG] Row yang cocok: {row}")
             try:
                 sisa = int(row["sisa"]) if row["sisa"] else 0
                 jumlah_keluar = int(jumlah_keluar)
