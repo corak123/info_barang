@@ -86,8 +86,7 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
     data = invoice_sheet.get_all_records()
 
     for idx, row in enumerate(data):
-        if row["invoice_id"].strip().lower() == invoice_id.strip().lower() and
-           str(row["kode_barang"]).strip().lower() == str(kode_barang).strip().lower():
+        if row["invoice_id"].strip().lower() == invoice_id.strip().lower() and str(row["kode_barang"]).strip().lower() == str(kode_barang).strip().lower():
             try:
                 #sisa = int(row["sisa"])
                 sisa = int(row["sisa"]) if row["sisa"] else 0
