@@ -40,9 +40,13 @@ def get_barang_dari_invoice(invoice_id):
 
     return hasil
 
+
 def invoice_sudah_ada(invoice_id, kode_barang):
     data = invoice_sheet.get_all_records()
-    return any(row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang for row in data)
+    return any(
+        row["invoice_id"] == invoice_id and row["kode_barang"] == kode_barang
+        for row in data
+    )
 
 
 def update_sisa_barang(invoice_id, kode_barang, jumlah_keluar):
@@ -54,7 +58,7 @@ def update_sisa_barang(invoice_id, kode_barang, jumlah_keluar):
                 sisa_lama = int(row["sisa"])
                 sisa_baru = sisa_lama - jumlah_keluar
                 if sisa_baru < 0:
-                    return f"Gagal: jumlah keluar melebihi sisa barang."
+                    return "Gagal: jumlah keluar melebihi sisa barang."
 
                 # Baris di gspread = i + 2 (karena baris pertama adalah header)
                 invoice_sheet.update_cell(i + 2, list(row.keys()).index("sisa") + 1, sisa_baru)
