@@ -86,9 +86,11 @@ def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, k
         return f"Gagal menambahkan barang: {e}"
 
 
-def tambah_barang_keluar_validated(invoice_sheet, barang_keluar_sheet,
-                                   sj_id, invoice_id, so, po, nama_barang, kode_barang,
-                                   jumlah_keluar, tgl_sj, keterangan):
+def tambah_barang_keluar_validated(
+    sj_id, invoice_id, so, po, nama_barang, kode_barang,
+    jumlah_keluar, tgl_sj, keterangan
+):
+    # Misal ambil data invoice dari sheet
     data = invoice_sheet.get_all_records()
 
     for idx, row in enumerate(data):
@@ -103,7 +105,7 @@ def tambah_barang_keluar_validated(invoice_sheet, barang_keluar_sheet,
                 return f"Jumlah keluar melebihi sisa stok ({sisa})"
             else:
                 new_sisa = sisa - jumlah_keluar
-                baris_di_sheet = idx + 2  # header + 0-based idx
+                baris_di_sheet = idx + 2  # header + 0-based index
 
                 try:
                     invoice_sheet.update(f"E{baris_di_sheet}", [[new_sisa]])
@@ -118,9 +120,12 @@ def tambah_barang_keluar_validated(invoice_sheet, barang_keluar_sheet,
                 except Exception as e:
                     return f"Update sisa berhasil, tapi gagal menambahkan ke sheet 'keluar': {e}"
 
+                # Pastikan ada return sukses di sini
                 return f"Barang berhasil dikeluarkan. Sisa sekarang: {new_sisa}"
 
+    # Kalau tidak ketemu data
     return "Data barang tidak ditemukan di invoice."
+
 
 
 def update_sisa_barang(invoice_sheet, invoice_id, kode_barang, jumlah_keluar):
