@@ -90,7 +90,7 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
 
     for idx, row in enumerate(data):
         if (
-            row["invoice_id"].strip().lower() == invoice_id.strip().lower() and
+            (row.get("invoice_id") or "").strip().lower() == invoice_id.strip().lower()
             str(row["kode_barang"]).strip().lower() == str(kode_barang).strip().lower()
         ):
             try:
