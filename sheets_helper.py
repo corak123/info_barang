@@ -90,7 +90,7 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
 
     for idx, row in enumerate(data):
         if (
-            (row.get("invoice_id") or "").strip().lower() == invoice_id.strip().lower()
+            (row.get("invoice_id") or "").strip().lower() == invoice_id.strip().lower() and
             str(row["kode_barang"]).strip().lower() == str(kode_barang).strip().lower()
         ):
             try:
@@ -106,13 +106,11 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
                 baris_di_sheet = idx + 2  # Tambahkan 2 karena header + indexing 0-based
 
                 try:
-                    # Update nilai kolom 'sisa'
                     invoice_sheet.update(f"E{baris_di_sheet}", [[new_sisa]])
                 except Exception as e:
                     return f"Gagal update kolom sisa: {e}"
 
                 try:
-                    # Tambahkan baris baru ke sheet 'keluar'
                     barang_keluar_sheet.append_row([
                         sj_id, invoice_id, so, po, nama_barang, kode_barang,
                         jumlah_keluar, str(tgl_sj), keterangan
@@ -121,5 +119,3 @@ def tambah_barang_keluar_validated(sj_id, invoice_id, so, po, nama_barang, kode_
                     return f"Update sisa berhasil, tapi gagal menambahkan ke sheet 'keluar': {e}"
 
                 return f"Barang berhasil dikeluarkan. Sisa sekarang: {new_sisa}"
-
-    return "Data invoice dan kode barang tidak ditemukan."
