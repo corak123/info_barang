@@ -20,10 +20,30 @@ sheet = client.open(SPREADSHEET_NAME)
 invoice_sheet = sheet.worksheet("invoice")
 barang_keluar_sheet = sheet.worksheet("keluar")
 
+# def get_barang_dari_invoice(invoice_id):
+#     hasil = []
+#     data = invoice_sheet.get_all_records()
+#     invoice_id = invoice_id.strip().lower()
+
+#     for row in data:
+#         if not isinstance(row, dict):
+#             continue
+#         if "invoice_id" not in row or "sisa" not in row:
+#             continue
+
+#         if str(row["invoice_id"]).strip().lower() == invoice_id:
+#             try:
+#                 if int(row["sisa"]) > 0:
+#                     hasil.append(row)
+#             except ValueError:
+#                 continue
+
+#     return hasil
+
 def get_barang_dari_invoice(invoice_id):
     hasil = []
     data = invoice_sheet.get_all_records()
-    invoice_id = invoice_id.strip().lower()
+    invoice_id = invoice_id.strip().lower().lstrip("'")  # Hapus tanda kutip satu dari awal input
 
     for row in data:
         if not isinstance(row, dict):
@@ -31,7 +51,10 @@ def get_barang_dari_invoice(invoice_id):
         if "invoice_id" not in row or "sisa" not in row:
             continue
 
-        if str(row["invoice_id"]).strip().lower() == invoice_id:
+        # Hapus tanda kutip satu dari invoice_id di sheet
+        row_invoice = str(row["invoice_id"]).strip().lower().lstrip("'")
+
+        if row_invoice == invoice_id:
             try:
                 if int(row["sisa"]) > 0:
                     hasil.append(row)
