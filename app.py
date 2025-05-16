@@ -50,7 +50,7 @@ if "invoice_id" not in st.session_state:
 # Proses setelah klik tombol "Cek Invoice"
 if cek_ditekan and invoice_id:
     with st.spinner("Mengecek invoice..."):
-        barang_list = get_barang_dari_invoice(invoice_id)
+        barang_list = get_barang_dari_invoice(str(invoice_id))
 
     if not barang_list:
         st.session_state.barang_list = []
