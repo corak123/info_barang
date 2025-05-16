@@ -116,7 +116,7 @@ if barang_list:
                     )
 
                     if "berhasil" in hasil.lower():
-                        update_invoice_status(invoice_sheet)
+                        update_invoice_status(invoice_id)
                         st.success("Barang berhasil dikeluarkan dan sisa di-invoice diperbarui.")
                     else:
                         st.error(hasil)
