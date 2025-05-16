@@ -72,6 +72,16 @@ def invoice_sudah_ada(invoice_id, kode_barang):
         for row in data
     )
 
+def update_invoice_status(sheet):
+    records = sheet.get_all_records()
+    for i, row in enumerate(records, start=2):  # mulai dari baris ke-2
+        try:
+            sisa = int(row["sisa"])
+            status = "selesai" if sisa == 0 else "aktif"
+            sheet.update_cell(i, 8, status)  # kolom ke-8 = kolom H = "status"
+        except:
+            pass  # biar aman kalau ada nilai kosong atau error
+
 
 def tambah_barang_masuk(invoice_id, nama_barang, kode_barang, jumlah, tanggal, keterangan):
     try:
