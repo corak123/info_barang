@@ -106,10 +106,6 @@ def tambah_barang_keluar_validated(
     data = invoice_sheet.get_all_records()
 
     for idx, row in enumerate(data):
-        print(f"\n[DEBUG] Cek baris ke-{idx+2}:")
-        print(f"  invoice_id: '{row['invoice_id']}'")
-        print(f"  kode_barang: '{row['kode_barang']}'")
-
         if str(row["invoice_id"]).strip() == str(invoice_id).strip() and str(row["kode_barang"]).strip() == str(kode_barang).strip():
             try:
                 sisa = int(row["sisa"]) if str(row["sisa"]).strip().isdigit() else 0
