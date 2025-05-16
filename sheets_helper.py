@@ -70,8 +70,8 @@ def invoice_sudah_ada(invoice_id, kode_barang):
         for row in data
     )
 
-def update_invoice_status(sheet):
-    records = sheet.get_all_records()
+def update_invoice_status(invoice_id):
+    records = invoice_sheet.get_all_records()
     for i, row in enumerate(records, start=2):  # mulai dari baris ke-2
         try:
             sisa = int(row["sisa"])
