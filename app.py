@@ -3,6 +3,9 @@ from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validate
 
 st.title("📦 Info Barang")
 
+menu = st.sidebar.selectbox(
+    "Menu",
+    ["Cek Invoice", "Barang Keluar", "Invoice Selesai", "Laporan"]
 # --- Form Tambah Barang Masuk ---
 with st.form("form_barang_masuk"):
     st.subheader("Tambah Barang Masuk (Invoice Baru)")
