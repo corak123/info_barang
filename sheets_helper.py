@@ -53,7 +53,8 @@ def get_barang_dari_invoice(invoice_id):
 
         # Hapus tanda kutip satu dari invoice_id di sheet
         row_invoice = str(row["invoice_id"]).strip().lower().lstrip("'")
-
+        # DEBUG:
+        st.write("Bandingkan →", row_invoice, "vs", invoice_id)
         if row_invoice == invoice_id:
             try:
                 if int(row["sisa"]) > 0:
