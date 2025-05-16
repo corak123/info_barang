@@ -76,7 +76,7 @@ def update_invoice_status(invoice_id):
         try:
             sisa = int(row["sisa"])
             status = "selesai" if sisa == 0 else "aktif"
-            sheet.update_cell(i, 8, status)  # kolom ke-8 = kolom H = "status"
+            invoice_sheet.update_cell(i, 8, status)  # kolom ke-8 = kolom H = "status"
         except:
             pass  # biar aman kalau ada nilai kosong atau error
 
