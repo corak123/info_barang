@@ -3,7 +3,7 @@ from sheets_helper import get_barang_dari_invoice, tambah_barang_keluar_validate
 
 st.title("📦 Info Barang")
 
-menu = st.sidebar.selectbox("Pilih Menu", ["Tambah Barang Masuk", "Barang Keluar", "Lihat Stok", "Riwayat Transaksi", "Cari Transaksi"])
+menu = st.sidebar.selectbox("Pilih Menu", ["Tambah Barang Masuk", "Barang Keluar"])
 
 if menu == "Tambah Barang Masuk":
         # --- Form Tambah Barang Masuk ---
